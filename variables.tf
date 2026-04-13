@@ -18,6 +18,11 @@ variable "region" {
   default = "us-east-1"
 }
 
+variable "key_pair_name" {
+  type    = string
+  default = null
+}
+
 variable "vpc_cidr" {
   type    = string
   default = "10.10.0.0/16"
