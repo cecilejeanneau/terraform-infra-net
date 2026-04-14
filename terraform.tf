@@ -1,6 +1,13 @@
 terraform {
   required_version = ">= 1.7.0"
 
+  backend "s3" {
+    bucket       = "tf-cecile-terraform-state-978514349126"
+    key          = "cecile/project.tfstate"
+    region       = "us-east-1"
+    use_lockfile = true
+  }
+
   required_providers {
     aws = {
       source  = "hashicorp/aws"
