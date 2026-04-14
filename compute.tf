@@ -33,3 +33,32 @@ resource "aws_instance" "web" {
     Name = "${local.prefix}-ec2-web"
   })
 }
+
+resource "aws_security_group" "imported" {
+  name        = "tf-cecile-dev-sg-import"
+  description = "SG importe depuis la console"
+  vpc_id      = aws_vpc.main.id
+
+  ingress {
+    from_port   = 443
+    to_port     = 443
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  tags = merge(local.common_tags, {
+    Name = "${local.prefix}-sg-import"
+  })
+}
+
+import {
+  to = aws_security_group.imported
+  id = "sg-029d19753fce29245"
+}
