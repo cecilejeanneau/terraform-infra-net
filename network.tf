@@ -1,91 +1,43 @@
-resource "aws_vpc" "main" {
-  cidr_block           = var.vpc_cidr
-  enable_dns_support   = true
-  enable_dns_hostnames = true
-
-  tags = merge(local.common_tags, {
-    Name = "${local.prefix}-vpc"
-  })
-}
-
-resource "aws_subnet" "this" {
-  for_each = var.subnets
-
-  vpc_id                  = aws_vpc.main.id
-  cidr_block              = each.value.cidr_block
-  availability_zone       = each.value.az
-  map_public_ip_on_launch = each.value.public
-
-  tags = merge(local.common_tags, {
-    Name = "${local.prefix}-subnet-${each.key}"
-  })
+module "network" {
+  source      = "./modules/network"
+  student_name = var.student_name
+  environment  = var.environment
+  vpc_cidr     = var.vpc_cidr
+  subnets      = var.subnets
+  common_tags  = local.common_tags
 }
 
 moved {
-  from = aws_subnet.public
-  to   = aws_subnet.this["public"]
+  from = aws_vpc.main
+  to   = module.network.aws_vpc.main
 }
 
 moved {
-  from = aws_subnet.private
-  to   = aws_subnet.this["private"]
+  from = aws_subnet.this["public"]
+  to   = module.network.aws_subnet.this["public"]
 }
 
-resource "aws_internet_gateway" "main" {
-  vpc_id = aws_vpc.main.id
-
-  tags = merge(local.common_tags, {
-    Name = "${local.prefix}-igw"
-  })
+moved {
+  from = aws_subnet.this["private"]
+  to   = module.network.aws_subnet.this["private"]
 }
 
-resource "aws_route_table" "public" {
-  vpc_id = aws_vpc.main.id
-
-  route {
-    cidr_block = "0.0.0.0/0"
-    gateway_id = aws_internet_gateway.main.id
-  }
-
-  tags = merge(local.common_tags, {
-    Name = "${local.prefix}-rt-public"
-  })
+moved {
+  from = aws_internet_gateway.main
+  to   = module.network.aws_internet_gateway.main
 }
 
-resource "aws_route_table_association" "public" {
-  subnet_id      = aws_subnet.this["public"].id
-  route_table_id = aws_route_table.public.id
+moved {
+  from = aws_route_table.public
+  to   = module.network.aws_route_table.public
 }
 
-resource "aws_security_group" "web" {
-  name        = "${local.prefix}-sg-web"
-  description = "Allow SSH and HTTP from anywhere"
-  vpc_id      = aws_vpc.main.id
+moved {
+  from = aws_route_table_association.public
+  to   = module.network.aws_route_table_association.public
+}
 
-  ingress {
-    description = "SSH"
-    from_port   = 22
-    to_port     = 22
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
-  ingress {
-    description = "HTTP"
-    from_port   = 80
-    to_port     = 80
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
-  egress {
-    from_port   = 0
-    to_port     = 0
-    protocol    = "-1"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
-  tags = merge(local.common_tags, {
-    Name = "${local.prefix}-sg-web"
-  })
+moved {
+  from = aws_security_group.web
+  to   = module.network.aws_security_group.web
 }
