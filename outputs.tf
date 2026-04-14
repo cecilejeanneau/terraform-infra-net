@@ -5,12 +5,12 @@ output "vpc_id" {
 
 output "public_subnet_id" {
 	description = "ID of the public subnet"
-	value       = aws_subnet.public.id
+	value       = aws_subnet.this["public"].id
 }
 
 output "private_subnet_id" {
 	description = "ID of the private subnet"
-	value       = aws_subnet.private.id
+	value       = aws_subnet.this["private"].id
 }
 
 output "web_security_group_id" {
