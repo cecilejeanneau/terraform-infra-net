@@ -6,13 +6,13 @@ Ce projet contient une infra AWS avec :
 - Instance EC2 Ubuntu + nginx
 - Backend Terraform S3 (state distant)
 - Import d'un Security Group existant
-- Bonus: module local réseau
+- Bonus : module local réseau
 
 Le projet est prévu pour tourner en us-east-1.
 
 ## 1) Prérequis
 
-Installer:
+Installer :
 - Terraform >= 1.7
 - AWS CLI v2
 - Git
@@ -34,7 +34,7 @@ Ne jamais réutiliser ceux d'un autre et ne jamais les committer.
 
 Option A (fichier credentials) :
 - ~/.aws/credentials
-- profil default avec:
+- profil default avec :
   - aws_access_key_id
   - aws_secret_access_key
   - aws_session_token (si session temporaire)
@@ -57,13 +57,13 @@ Les valeurs à adapter selon votre user :
 
 Le plus simple : créer un fichier local non committé dev.tfvars (déjà ignoré par .gitignore) :
 
-Exemple:
+Exemple :
 student_name = "votre-prenom"
 promo_name   = "VOTRE_PROMO"
 key_name     = "tf-votre-prenom-dev-key"
 region       = "us-east-1"
 
-Puis utiliser:
+Puis utiliser :
 - terraform plan -var-file="dev.tfvars"
 - terraform apply -var-file="dev.tfvars"
 
@@ -75,12 +75,12 @@ Important : ne pas écraser le state d'un autre utilisateur.
 Vérifier/adapter :
 - bucket : bucket S3 accessible avec VOS droits
 - key : chemin unique (ex : votre-prenom/project.tfstate)
-- region: us-east-1
+- region : us-east-1
 
 Si vous changez backend :
 - terraform init -migrate-state
 
-## 6) Initialisation et verification
+## 6) Initialisation et vérification
 
 Dans le dossier TP2 :
 - terraform init
@@ -138,7 +138,7 @@ Important :
   - credentials AWS
   - fichiers tfvars sensibles
   - state Terraform
-- Garder .terraform.lock.hcl versionne
+- Garder .terraform.lock.hcl versionné
 
 ## 11) Séquence rapide pour un nouveau collègue
 
